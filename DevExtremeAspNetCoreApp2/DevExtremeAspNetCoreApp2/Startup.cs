@@ -30,7 +30,7 @@ namespace DevExtremeAspNetCoreApp2
             // Add framework services.
             //services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All));
             //services.AddMvc().AddRazorRuntimeCompilation();
-            services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
+            //services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 
 
 
