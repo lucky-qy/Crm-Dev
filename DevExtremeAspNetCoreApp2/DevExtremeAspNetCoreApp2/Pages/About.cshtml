@@ -1,0 +1,134 @@
+@page
+@using DevExtremeAspNetCoreApp2.Models
+<h2 class="content-block">About</h2>
+
+
+@(Html.DevExtreme().DataGrid<SYS_Employees>()
+    .ElementAttr(new { @class = "dx-card wide-card" })
+    .DataSource(d => d.Mvc().Controller("SampleData")
+    .LoadAction("Get")
+    .Key("StaffID")
+    .DeleteAction("Delete")
+    .UpdateAction("Put")
+    .InsertAction("Post")
+    )
+    .ShowBorders(false)
+    .FilterRow(f => f.Visible(true))
+    .FocusedRowEnabled(true)
+    .FocusedRowIndex(0)
+    .ColumnAutoWidth(true)
+
+    .ColumnHidingEnabled(true)
+    .Editing(E=>E.AllowDeleting(true)
+                 .AllowUpdating(true)
+                 .AllowAdding(true)
+                 .UseIcons(true)
+                 .Mode(GridEditMode.Popup)
+    )
+    .Columns(columns => {
+
+        columns.Add().Type(GridCommandColumnType.Buttons)
+                    .Fixed(true).FixedPosition(HorizontalEdge.Left)
+                    .Buttons(b =>
+                    {
+
+                        //   b.Add().Hint("详情").Icon("info").OnClick("gridShowDetail");
+                        b.Add().Name(GridColumnButtonName.Edit);
+                        b.Add().Name(GridColumnButtonName.Delete);
+                    });
+
+
+        columns.AddFor(m => m.Name);
+        columns.AddFor(m => m.CardNo);
+        columns.AddFor(m => m.BirthDate);
+        columns.AddFor(m => m.Email);
+        columns.AddFor(m => m.WorkState);
+
+        columns.AddFor(m => m.CreateDate).SortOrder(SortOrder.Desc);
+    })
+    .Paging(p => p.PageSize(10))
+    .Pager(p => p
+        .ShowPageSizeSelector(true)
+        .AllowedPageSizes(new[] { 5, 10, 20 })
+        .ShowInfo(true)
+    ).OnToolbarPreparing("toolbar_preparing")
+   // .OnInitNewRow("gridInitNewRow").OnRowUpdating("gridRowUpdating").OnEditingStart("formEditingStart")
+)
+//   .OnToolbarPreparing("toolbar_preparing")
+
+
+<script>
+
+       function gridInitNewRow(e) {
+        isEditRow = false;
+        formReadOnly = false;
+        finishedFlagValue = 0;
+        if (isNotEmpty(loginSalesMan)) {
+            e.data.field0023 = loginSalesMan.id;
+            if (loginSalesDepartment) {
+                e.data.field0024 = loginSalesDepartment.id;
+            }
+            e.data.start_member_id = loginSalesMan.id;
+            e.data.modify_member_id = loginSalesMan.id;
+        }
+      @*e.data.field0057 = "@Model.Field003652IsOrNot.FirstOrDefault(o => o.showvalue == "是")?.id";*@
+        field0005Value = "";
+        field0008Value = "";
+        field0010Value = "";
+        field0052Value = "";
+        field0014Value = "";
+        field0016Items = [];
+        field0011Items = [];
+    }
+
+
+
+
+
+        function toolbar_preparing(e) {
+        let toolbarItems = e.toolbarOptions.items;
+
+        // Modifies an existing item
+        toolbarItems.forEach(function (item) {
+            if (item.name === "addRowButton") {
+                item.options.text = "添加";
+                item.location = "after";
+                item.showText = "always";
+            }
+        });
+        //toolbarItems.unshift({
+        //    location: "after",
+        //    widget: "dxButton",
+        //    options: {
+        //        elementAttr: { id: "btnExport" },
+        //        icon: "xlsxfile",
+        //        text: "批量导出",
+        //        onClick: exportClick
+        //    }
+        //}
+        //{
+        //    location: "after",
+        //    widget: "dxButton",
+        //    options: {
+        //        elementAttr: { id: "btnImportExcel" },
+        //        icon: "xlsxfile",
+        //        text: "批量添加"
+        //    }
+        //}
+       // );
+        @*if (("@Model.checkRole.IsAdmin").toLowerCase() === "true") {
+            toolbarItems.unshift({
+                location: "after",
+                widget: "dxButton",
+                options: {
+                    elementAttr: { id: "btnChangeSales" },
+                    icon: "movetofolder",
+                    text: "转移销售",
+                    hint: "批量转移销售",
+                    disabled: true,
+                    onClick: changeSalesClick
+                }
+            });
+            }*@
+    }
+</script>

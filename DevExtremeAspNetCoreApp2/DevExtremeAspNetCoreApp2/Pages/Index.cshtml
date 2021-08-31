@@ -1,0 +1,129 @@
+@page
+@using DevExtremeAspNetCoreApp2.Models
+
+<h2 class="content-block">首页</h2>
+
+@(Html.DevExtreme().DataGrid<SYS_Employees>()
+    .ElementAttr(new { @class = "dx-card wide-card" })
+    .DataSource(d => d.Mvc().Controller("SampleData")
+    .LoadAction("Get")
+    .Key("StaffID")
+    .DeleteAction("Delete")
+    .UpdateAction("Put")
+    .InsertAction("Post") 
+    )
+    .ShowBorders(false)
+    .FilterRow(f => f.Visible(true))
+    .FocusedRowEnabled(true)
+    .FocusedRowIndex(0)
+    .ColumnAutoWidth(true) 
+
+    .ColumnHidingEnabled(true)
+    .Editing(E=>E.AllowDeleting(true)
+    .AllowUpdating(true)
+    .AllowAdding(true).UseIcons(true)  
+    )
+    .Columns(columns => {
+
+        columns.Add().Type(GridCommandColumnType.Buttons)
+                    .Fixed(true).FixedPosition(HorizontalEdge.Left)
+                    .Buttons(b =>
+                    {
+
+                        b.Add().Hint("详情").Icon("info").OnClick("gridShowDetail");
+                        b.Add().Name(GridColumnButtonName.Edit);
+                        b.Add().Name(GridColumnButtonName.Delete);
+                    });
+
+
+        columns.AddFor(m => m.Name);
+        columns.AddFor(m => m.CardNo);
+        columns.AddFor(m => m.BirthDate);
+        columns.AddFor(m => m.Email);
+        columns.AddFor(m => m.WorkState);
+
+        //        columns.AddFor(m => m.field0001).Lookup(lookup => lookup
+        //.DataSource(Model.applyUserList)
+        //.DisplayExpr("name")
+        //.ValueExpr("id"));
+
+
+        columns.AddFor(m => m.CreateDate).SortOrder(SortOrder.Desc);
+    })
+    .Paging(p => p.PageSize(10))
+    .Pager(p => p
+        .ShowPageSizeSelector(true)
+        .AllowedPageSizes(new[] { 5, 10, 20 })
+        .ShowInfo(true)
+    )
+)
+@(Html.DevExtreme().Popup()
+        .ID("gridDetail-popup")
+        .Width(1000)
+        .Height("auto").MaxHeight("95%")
+        .ShowTitle(true)
+        .Title("UserInfo")
+        .ContentTemplate(new TemplateName("popup-template-gridDetail"))
+        .Visible(false)
+        .CloseOnOutsideClick(true).ShowCloseButton(true)
+    )
+
+@using (Html.DevExtreme().NamedTemplate("popup-template-gridDetail"))
+{@(Html.DevExtreme().Form<SYS_Employees>
+    ().ID("gridDetailForm").AlignItemLabels(true)
+    .ElementAttr("class", "grid_detail_form")
+    .ColCount(2).ShowRequiredMark(false).ScrollingEnabled(true)
+    .Items(items => {
+        items.AddSimpleFor(m => m.Name).Template(new TemplateName("formItemTemplate"));
+        items.AddSimpleFor(m => m.CardNo).Template(new TemplateName("formItemTemplate"));
+        items.AddSimpleFor(m => m.BirthDate).Template(new TemplateName("formItemTemplate"));
+
+         items.AddSimpleFor(m => m.Email).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0007).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0010).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0038).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0001).Template(new TemplateName("saleTemplate"));
+        //items.AddSimpleFor(m => m.field0002).Template(new TemplateName("salesDepartmentTemplate"));
+        //items.AddSimpleFor(m => m.field0004).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0034).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0011).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0033).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0009).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0029).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0030).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0012).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0013).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0014).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0024).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0017).Template(new TemplateName("saleTemplate"));
+        //items.AddSimpleFor(m => m.field0018).Template(new TemplateName("salesDepartmentTemplate"));
+        //items.AddSimpleFor(m => m.field0019).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0020).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0025).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0026).Template(new TemplateName("formItemTemplate"));
+        //items.AddSimpleFor(m => m.field0031).Template(new TemplateName("enmuTemplate"));
+        //items.AddSimpleFor(m => m.field0015).Template(new TemplateName("formItemTemplate"));
+    })
+    )}
+
+@using (Html.DevExtreme().NamedTemplate("formItemTemplate"))
+{@(Html.DevExtreme().TextBox().ReadOnly(true).Value(new JS("editorOptions.value")))}
+
+
+
+<script>
+
+    function getGridDetailPopup() {
+        return $("#gridDetail-popup").dxPopup("instance");
+    }
+
+    function gridShowDetail(e) { 
+        getGridDetailPopup().show();
+        var detailForm = $("#gridDetailForm").dxForm("instance");
+        detailForm.option("formData", e.row.data);
+        detailForm.repaint();
+
+    }
+
+</script>
+
